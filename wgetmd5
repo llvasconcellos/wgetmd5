@@ -1,0 +1,12 @@
+#bin/bash
+
+
+
+if
+
+if [ ! $1 ] && [ ! $2 ] ; then
+  echo "Strings \"$1\" and \"$2\" are null."
+  exit 1
+fi
+
+# echo "O arquivo para download é: $1";
