@@ -1,12 +1,70 @@
-#bin/bash
+#!/bin/bash
 
+#       ____            __  __
+# 	   / __ \___ _   __/ / / /___  __  __________
+# 	  / / / / _ \ | / / /_/ / __ \/ / / / ___/ _ \
+# 	 / /_/ /  __/ |/ / __  / /_/ / /_/ (__  )  __/
+# 	/_____/\___/|___/_/ /_/\____/\__,_/____/\___/ . com . br
+#
+#   Created by Leonardo Lima de Vasconcellos on 08-19-2012
+#   leonardo@devhouse.com.br
+#
+#   * This script requires bash 4 or later
+#
+ 
+# Default language is English
+language="en"
 
-
-if
-
-if [ ! $1 ] && [ ! $2 ] ; then
-  echo "Strings \"$1\" and \"$2\" are null."
-  exit 1
+# if system language is Portuguese then set language to portuguese
+if [ `expr match "$LANG" "pt_BR"` -gt 0 ] || [ `expr match "$LANG" "pt_PT"` -gt 0 ] ; then
+    language="pt"
 fi
 
-# echo "O arquivo para download é: $1";
+# definition of messages
+if [ "$language" == "pt" ] ; then
+    declare -A messages=(
+        ["error_no_arguments"]="\n\033[1;31mFaltam argumentos.\033[0m\n\n\tUso:\n\n\t$ wgetmd5 url_arquivo url_arquivo_md5\n\n"
+        ["download_started"]="\n\n\033[1;32mIniciando download...\033[0m\n\n"
+        ["download_success"]="\n\n\033[1;32mDownload concluido com sucesso!\033[0m\n\n"
+        ["download_fail"]="\n\n\033[1;31mDownload corrompido!\033[0m\n\n"
+    )
+else
+     declare -A messages=(
+        ["error_no_arguments"]="\n\033[1;31mArgument missing.\033[0m\n\n\tUsage:\n\n\t$ wgetmd5 file_url md5_file_url\n\n"
+        ["download_started"]="\n\n\033[1;32mStarting download...\033[0m\n\n"
+        ["download_success"]="\n\n\033[1;32mDownload successful!\033[0m\n\n"
+        ["download_fail"]="\n\n\033[1;31mDownload corrupted!\033[0m\n\n"
+    )
+fi
+
+# if no arguments print usage message
+if [ ! $1 ] && [ ! $2 ] ; then
+    echo -e ${messages["error_no_arguments"]}
+    exit 1
+fi
+
+
+# extract file names
+filename=`basename $1`
+md5filename=`basename $2`
+
+# start download
+echo -e ${messages["download_started"]}
+wget $1 $2
+
+# check md5sum from downloaded file
+md5test=`md5sum "$filename" | awk '{print $1}'`
+
+# extract md5sum string from downloaded md5 file
+md5string=`cat "$md5filename" | awk '{print $1}'`
+
+# if strings match then download ok
+if [ "$md5test" == "$md5string" ] ; then
+    echo -e ${messages["download_success"]}
+    echo -e "$md5test" "==" "$md5string" "\n\n"
+    exit 0
+else
+    echo -e ${messages["download_fail"]}
+    echo -e "$md5test" "!=" "$md5string" "\n\n"
+    exit 1
+fi

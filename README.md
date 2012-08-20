@@ -24,7 +24,9 @@ $ wgetmd5 ftp://ftp.gimp.org/pub/gimp/v2.8/gimp-2.8.0.tar.bz2 ftp://ftp.gimp.org
 License
 -------
 
-The source files are made available under the terms of the GNU Affero General Public Licence (AGPL).
+The source files are made available under the terms of the GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+
 
 
         ____            __  __
